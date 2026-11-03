@@ -81,9 +81,8 @@
 
     <!-- Firebase SDK (실시간 온라인 데이터 저장 및 누적 연동) -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Firebase는 렌더링 이후 선택적으로 로드합니다 (실패해도 글은 항상 표시됨)
+        let updateDoc, increment;
 
         // 기본 썰 데이터 (모든 좋아요 수는 0으로 초기화되었습니다)
         const DEFAULT_POST_DATA = {
@@ -150,19 +149,19 @@
                 { author: "익명35", time: "방금 전", text: "시우랑 슈웨어는 서로 모르는게 없을듯 슈웨어 팬싸 매번가는건 다 아는 사실이고 공방 때도 항상 편지 써오거든? 팬매도 슈웨어는 당연히 편지 준다고 생각하고 받으러 옴 덕질도 오래했는데 이렇게까지 만나고 편지쓰면 뭘 모를래야 모를수가 없을듯 비밀 개많을 것 같아 아 갑자기 ㅈㄴ 부럽네", likes: 0 },
                 { author: "익명36", time: "방금 전", text: "나 오늘 슈웨어 역팬싸? 당하는거? 봄ㅋㅋㅋ 누가 시우한테 신랑이 축의금을 왜 내 밈 했나봐 시우가 슈웨어한테 형은 나 결혼하면 축의금 얼마까지 낼 수 있어? 이러는거야 슈웨어 진심으로 고민하다가 가전제품 큰 거 해줄게 이래서 시우 아! 형! 센스있게 신랑이 축의금을 왜 내 해줘야지! 이럼", likes: 0 },
                 { author: "익명37", time: "방금 전", text: "🔒 솔직히 나 시우랑 슈웨어 묘한 기류 느낀적 있음 나도 팬싸 때 슈웨어 뒤였는데 시우가 슈웨어 팬 같았음 마스크 내려봐 하는게 아니라 형 얼굴보여조(진짜 이런 애교 만땅 말투로) 하고 자기 다 봤으니까 얼른 올리하고 함 근데 진심 남들 보여주기 싫어보였음 망상아니고 진짜 분위기가 묘~ 했음", likes: 0 },
-                { author: "익명38", time: "방금 전", text: "🔒 나 이거 뭔지 앎 슈웨어 타멤들이랑은 진짜 형 동생처럼 서로 편하게 대하거든? 근데 시우랑만 썸타는 사람들처럼 뚝딱?도 아니고 아 뭐라고해야됨 이거를..? 걍 둘 다 몸을 베베 꼬고 있음 썸보다도 선보고 결혼해서 뒤늦게 연애하는 사람들같음 나도 무슨말인지 모르겠고 느껴야됨 이거는", likes: 0 }
+                { author: "익명38", time: "방금 전", text: "🔒 나 이거 뭔지 앎 슈웨어 타멤들이랑은 진짜 형 동생처럼 서로 편하게 대하거든? 근데 시우랑만 썸타는 사람들처럼 뚝딱?도 아니고 아 뭐라고해야됨 이거를..? 걍 둘 다 몸을 베베 꼬고 있음 썸보다도 선보고 결혼해서 뒤늦게 연애하는 사람들같음 나도 무슨말인지 모르겠고 느껴야됨 이거는", likes: 0 },
                 { 
                     author: "익명39", time: "방금 전", text: "씨빨 슈웨어 얼공함", likes: 0,
                     replies: [
                         { author: "익명40", time: "방금 전", text: "?????? 자기가 얼굴 깠어??", likes: 0 },
                         { author: "익명41", time: "방금 전", text: "아니 팬싸 때 마스크 벗고 실수로 뒤돌아버림", likes: 0 },
-                        { author: "익명42", time: "방금 전", text: "시우가 마스크 벗으래서 벗고 있다가 시우가 카메라 어쩌고 얘기를 했나봐 자기 카메라 가리키려고 뒤돌았는데 아차 싶었는지 급하게 다시 마스크 씀", likes: 0 }
+                        { author: "익명42", time: "방금 전", text: "시우가 마스크 벗으래서 벗고 있다가 시우가 카메라 어쩌고 얘기를 했나봐 자기 카메라 가리키려고 뒤돌았는데 아차 싶었는지 급하게 다시 마스크 씀", likes: 0 },
                         { author: "익명43", time: "방금 전", text: "어케 생겼어?", likes: 0 },
 
                     ]
                 },
                 { 
-                    author: "익명44", time: "방금 전", text: "오늘 휀걸들 다 잠깐동안 관람대상 변경함 슈웨어 생카 스태프 다 키큰 존잘들 밖에 없어서 슈웨어도 잘생겼겠다 생각은 했거든? 끼리끼리 사이언스에 일단 눈만 봐도 삘이 오잖어; 근데 배우처럼 생김 개잘생겼는데 아이돌 삘이 아니라 배우 삘 남", likes: 0 }
+                    author: "익명44", time: "방금 전", text: "오늘 휀걸들 다 잠깐동안 관람대상 변경함 슈웨어 생카 스태프 다 키큰 존잘들 밖에 없어서 슈웨어도 잘생겼겠다 생각은 했거든? 끼리끼리 사이언스에 일단 눈만 봐도 삘이 오잖어; 근데 배우처럼 생김 개잘생겼는데 아이돌 삘이 아니라 배우 삘 남", likes: 0,
                     replies: [
                         { author: "익명45", time: "방금 전", text: "턱스크하면 다 잘생김;;", likes: 0, hasMoreBtn: true },
                         { author: "익명46", time: "방금 전", text: "ㄴㄴ 아님 오늘 시우가 마스크 걍 벗으랬는지 한쪽 귀에 고무줄 걸어놓고 아예 벗음", likes: 0 },
@@ -171,7 +170,7 @@
                 },
                 { author: "익명48", time: "방금 전", text: "ㅈㄴ 몇명이 자꾸 힐끔 거리니까 박시웈ㅋㅋㅋ 박수 짝짝 치고 앞에 보라고 함 자기 보라고 질투난다고 휀걸들한테 질투가 나는건지 어떤 남자한테 질투가 나는건지는 몰루ㅎㅋ", likes: 0 },
                 { 
-                    author: "익명44", time: "방금 전", text: "얼굴 깐김에 나 슈웨어 직업 안다.. 쇼케 때 입장 기다린다고 벤치에 가방 올려두고 앉아있었거든 근데 슈웨어가 전화받고 급하게 노트북을 꺼내는거야 편하게하라고 가방 치워줬는데 코딩하고 있었음 전화 끊고나서 고맙다고 하길래 코딩하냐고 나 컴공이라니까 되게 반가워하면서 자기 프리랜서 프로그래머라고 말해줌 같이 산나게 전공토크하고 마지막에 나한테 눈이랑 거북목, 디스크 조심하라고도 해줌 말투 진짜 나긋나긋하고 눈이 아름다우셨음", likes: 0 }
+                    author: "익명44", time: "방금 전", text: "얼굴 깐김에 나 슈웨어 직업 안다.. 쇼케 때 입장 기다린다고 벤치에 가방 올려두고 앉아있었거든 근데 슈웨어가 전화받고 급하게 노트북을 꺼내는거야 편하게하라고 가방 치워줬는데 코딩하고 있었음 전화 끊고나서 고맙다고 하길래 코딩하냐고 나 컴공이라니까 되게 반가워하면서 자기 프리랜서 프로그래머라고 말해줌 같이 산나게 전공토크하고 마지막에 나한테 눈이랑 거북목, 디스크 조심하라고도 해줌 말투 진짜 나긋나긋하고 눈이 아름다우셨음", likes: 0,
                     replies: [
                         { author: "익명45", time: "방금 전", text: "님 그냥 눈이 아름다웠다는 걸 말하고 싶었던 거 아님?ㅋㅋㅋ 귀엽다", likes: 0 },
                         { author: "익명46", time: "방금 전", text: "프리랜서라 모든 스케에 다 있었던거네", likes: 0 },
@@ -187,6 +186,16 @@
         // Firebase 연동 초기화
         async function initFirebase() {
             try {
+                const BASE = "https://www.gstatic.com/firebasejs/11.6.1/";
+                const [{ initializeApp }, { getAuth, signInAnonymously, signInWithCustomToken }, fs] = await Promise.all([
+                    import(BASE + "firebase-app.js"),
+                    import(BASE + "firebase-auth.js"),
+                    import(BASE + "firebase-firestore.js")
+                ]);
+                const { getFirestore, doc, onSnapshot, setDoc } = fs;
+                updateDoc = fs.updateDoc;
+                increment = fs.increment;
+
                 const appId = typeof __app_id !== 'undefined' ? __app_id : 'anonymous-forum-app';
                 const firebaseConfig = typeof __firebase_config !== 'undefined' 
                     ? JSON.parse(__firebase_config) 
@@ -342,7 +351,7 @@
         window.togglePostLike = async function() {
             POST_DATA.likes = (POST_DATA.likes || 0) + 1;
             renderPost();
-            if (postRef) {
+            if (postRef && updateDoc) {
                 try {
                     await updateDoc(postRef, { likes: increment(1) });
                 } catch (e) { console.error(e); }
@@ -354,7 +363,7 @@
             if (POST_DATA.comments[cIndex]) {
                 POST_DATA.comments[cIndex].likes = (POST_DATA.comments[cIndex].likes || 0) + 1;
                 renderPost();
-                if (postRef) {
+                if (postRef && updateDoc) {
                     try {
                         const fieldKey = `commentLikes.${cIndex}`;
                         await updateDoc(postRef, { [fieldKey]: increment(1) });
@@ -368,7 +377,7 @@
             if (POST_DATA.comments[cIndex] && POST_DATA.comments[cIndex].replies[rIndex]) {
                 POST_DATA.comments[cIndex].replies[rIndex].likes = (POST_DATA.comments[cIndex].replies[rIndex].likes || 0) + 1;
                 renderPost();
-                if (postRef) {
+                if (postRef && updateDoc) {
                     try {
                         const fieldKey = `commentLikes.${cIndex}_${rIndex}`;
                         await updateDoc(postRef, { [fieldKey]: increment(1) });
@@ -377,7 +386,8 @@
             }
         };
 
-        // 초기화 실행
+        // 초기화 실행: 먼저 글을 그리고, 그 다음 Firebase 연결 시도
+        renderPost();
         initFirebase();
     </script>
 </body>
